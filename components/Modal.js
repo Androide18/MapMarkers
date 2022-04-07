@@ -1,4 +1,4 @@
-import { StyleSheet, Modal, Text, View } from "react-native";
+import { StyleSheet, Modal, Text, View, Dimensions } from "react-native";
 
 export default ({ children, visibility }) => {
   return (
@@ -21,9 +21,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.3)",
   },
   modalView: {
+    minWidth: Dimensions.get("window").width - 150,
     backgroundColor: "white",
-    borderRadius: 10,
-    padding: 35,
+    borderRadius: 4,
+    padding: 0,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {

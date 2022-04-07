@@ -1,10 +1,10 @@
-import { StyleSheet, View, Button, Text } from "react-native";
+import { StyleSheet, View, Button } from "react-native";
 
-export default ({ onPressLeft, textLeft }) => {
+export default ({ onPressLeft, textLeft, togglePointsFilter }) => {
   return (
     <View style={styles.panel}>
       <Button onPress={onPressLeft} title={textLeft} />
-      <Button title="Mostrar/Ocultar" />
+      <Button title="Mostrar/Ocultar" onPress={togglePointsFilter} />
     </View>
   );
 };
@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     width: "100%",
     flex: 1,
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-around",
     alignItems: "center",
   },
 });

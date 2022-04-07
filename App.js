@@ -9,6 +9,9 @@ export default function App() {
   const [name, setName] = useState("");
   const [visibilityFilter, setVisibilityFilter] = useState("new_point"); // new_point, all_points
   const [visibility, setVisibility] = useState(false);
+  const [pointsFilter, setPointsFilter] = useState(true);
+
+  const togglePointsFilter = () => setPointsFilter(!pointsFilter);
 
   const handleLongPress = ({ nativeEvent }) => {
     setVisibilityFilter("new_point");
@@ -22,16 +25,11 @@ export default function App() {
 
   const handleSubmit = () => {
     const newPoint = { coordinate: pointTemp, name: name };
-    console.log("newPoint");
-    console.log(newPoint);
-
     setPoints(points.concat(newPoint));
     setVisibility(false);
     setName("");
   };
-  console.log("points");
-  console.log(points);
-
+  
   const handleList = () => {
     setVisibilityFilter("all_points");
     setVisibility(true);
@@ -40,11 +38,19 @@ export default function App() {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <Map onLongPress={handleLongPress} />
-      <Panel onPressLeft={handleList} textLeft="Lista" />
+      <Map
+        onLongPress={handleLongPress}
+        points={points}
+        pointsFilter={pointsFilter}
+      />
+      <Panel
+        onPressLeft={handleList}
+        textLeft="Lista"
+        togglePointsFilter={togglePointsFilter}
+      />
       <Modal visibility={visibility}>
         {visibilityFilter === "new_point" ? (
-          <>
+          <View style={styles.form}>
             <Input
               title="Nombre"
               placeholder="Nombre del punto"
@@ -52,9 +58,9 @@ export default function App() {
             />
             <Button title="Aceptar" onPress={handleSubmit} />
             {/* <Button title="Cancelar" onPress={} /> */}
-          </>
+          </View>
         ) : (
-          <List points={points} />
+          <List points={points} closeModal={() => setVisibility(false)} />
         )}
       </Modal>
     </View>
@@ -62,10 +68,13 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  form: {
+    padding: 20,
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "center",
   },
 });
