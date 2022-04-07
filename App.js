@@ -1,43 +1,75 @@
+import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Dimensions, Modal } from "react-native";
-import MapView from "react-native-maps";
+import { StyleSheet, View, Button, Text } from "react-native";
+import { Map, Modal, Panel, Input, List } from "./components";
 
 export default function App() {
+  const [points, setPoints] = useState([]);
+  const [pointTemp, setPointTemp] = useState({});
+  const [name, setName] = useState("");
+  const [visibilityFilter, setVisibilityFilter] = useState("new_point"); // new_point, all_points
+  const [visibility, setVisibility] = useState(false);
+  const [pointsFilter, setPointsFilter] = useState(true);
+
+  const togglePointsFilter = () => setPointsFilter(!pointsFilter);
+
+  const handleLongPress = ({ nativeEvent }) => {
+    setVisibilityFilter("new_point");
+    setPointTemp(nativeEvent.coordinate);
+    setVisibility(true);
+  };
+
+  const handleChangeText = (text) => {
+    setName(text);
+  };
+
+  const handleSubmit = () => {
+    const newPoint = { coordinate: pointTemp, name: name };
+    setPoints(points.concat(newPoint));
+    setVisibility(false);
+    setName("");
+  };
+  
+  const handleList = () => {
+    setVisibilityFilter("all_points");
+    setVisibility(true);
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <MapView style={styles.map} />
-      <Modal animationType="slide" transparent={true} visible={true}>
-        <View style={styles.center}>
-          <View style={styles.modalView}>
-            <Text>Hello World! ♥</Text>
+      <Map
+        onLongPress={handleLongPress}
+        points={points}
+        pointsFilter={pointsFilter}
+      />
+      <Panel
+        onPressLeft={handleList}
+        textLeft="Lista"
+        togglePointsFilter={togglePointsFilter}
+      />
+      <Modal visibility={visibility}>
+        {visibilityFilter === "new_point" ? (
+          <View style={styles.form}>
+            <Input
+              title="Nombre"
+              placeholder="Nombre del punto"
+              onChangeText={handleChangeText}
+            />
+            <Button title="Aceptar" onPress={handleSubmit} />
+            {/* <Button title="Cancelar" onPress={} /> */}
           </View>
-        </View>
+        ) : (
+          <List points={points} closeModal={() => setVisibility(false)} />
+        )}
       </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalView: {
-    backgroundColor: "white",
-    borderRadius: 10,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-  },
-  map: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+  form: {
+    padding: 20,
   },
   container: {
     flex: 1,
